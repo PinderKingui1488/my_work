@@ -1,7 +1,5 @@
 import pytest
-
-
-from fromskypro.src.generators import filter_currency, transaction, number_generator
+from src.generators import filter_currency, number_generator, transaction
 
 
 @pytest.fixture
@@ -65,10 +63,22 @@ def test_transaction(transactions: list) -> None:
     assert next(transaction(transactions)) == "Перевод организации"
 
 
-@pytest.mark.parametrize("first, last, expected", [(1, 5, ["0000 0000 0000 0001", "0000 0000 0000 0002",
-                                                           "0000 0000 0000 0003", "0000 0000 0000 0004",
-                                                           "0000 0000 0000 0005"]),
-                                                   (4129313413480001, 4129313413480002,
-                                                    ["4129 3134 1348 0001", "4129 3134 1348 0002"])])
+@pytest.mark.parametrize(
+    "first, last, expected",
+    [
+        (
+            1,
+            5,
+            [
+                "0000 0000 0000 0001",
+                "0000 0000 0000 0002",
+                "0000 0000 0000 0003",
+                "0000 0000 0000 0004",
+                "0000 0000 0000 0005",
+            ],
+        ),
+        (4129313413480001, 4129313413480002, ["4129 3134 1348 0001", "4129 3134 1348 0002"]),
+    ],
+)
 def test_number_generator(first: int, last: int, expected: list) -> None:
     assert list(number_generator(first, last)) == expected

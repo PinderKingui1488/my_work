@@ -1,4 +1,4 @@
-from fromskypro.src.masks import mask_account_number, mask_card_number
+from src.masks import mask_account_number, mask_card_number
 
 
 def convert_date(input_date: str) -> str:
@@ -11,7 +11,7 @@ def convert_date(input_date: str) -> str:
 
 def number_or_account(user_input: str) -> str:
     """
-    Функция определяет работаем мы с счетом или картой.
+    Функция определяет работу счета или карты.
     """
     if "Счет" in user_input:
         return f"Счет {mask_account_number(user_input)}"
@@ -20,4 +20,3 @@ def number_or_account(user_input: str) -> str:
         card_name = user_card[:-1]
         card_number = user_card[-1]
         return " ".join(card_name) + " " + mask_card_number(card_number)
-

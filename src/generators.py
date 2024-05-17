@@ -19,4 +19,3 @@ def number_generator(start_range: int, end_range: int) -> Generator[str, None, N
     for number in range(start_range, end_range + 1):
         card_number = f"{number:0>16}"
         yield f"{card_number[:4]} {card_number[4:8]} {card_number[8:12]} {card_number[12:]}"
-

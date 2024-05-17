@@ -1,4 +1,7 @@
-def filter_by_state(list_: list, state_status: str = "executed") -> list:
+from typing import List, Dict
+
+
+def filter_by_state(list_: List[Dict], state_status: str = "executed") -> List[Dict]:
     """
     Функция фильтрует список по указанному значению state
     """
@@ -9,7 +12,7 @@ def filter_by_state(list_: list, state_status: str = "executed") -> list:
     return filtered_list
 
 
-def sort_by_date(list_: list, time: str = "increasing") -> list:
+def sort_by_date(list_: List[Dict], time: str = "increasing") -> List[Dict]:
     """Сортировка списка по дате"""
     sorted_list = []
     if time == "increasing":
