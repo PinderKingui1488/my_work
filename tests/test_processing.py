@@ -6,7 +6,7 @@ def filter_by_state(data: List[Dict], state_status: str) -> List[Dict]:
     Фильтрация списка словарей по значению ключа "state"
 
     Args:
-        data: Список словарей, которые нужно отфильтровать
+        data: список словарей на фильтрацию
         state_status: Значение ключа "state", по которому нужно фильтровать
 
     Returns:
