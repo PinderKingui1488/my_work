@@ -1,76 +1,36 @@
-from typing import List, Dict
+import pytest
+from src.processing import filter_by_state, sort_by_date
 
 
-def filter_by_state(data: List[Dict], state_status: str) -> List[Dict]:
-    """
-    Фильтрация списка словарей по значению ключа "state"
-
-    Args:
-        data: список словарей на фильтрацию
-        state_status: Значение ключа "state", по которому нужно фильтровать
-
-    Returns:
-        Отфильтрованный список словарей.
-    """
-    return [item for item in data if item["state"].upper() == state_status.upper()]
-
-
-def sort_by_date(data: List[Dict], sort_order: str) -> List[Dict]:
-    """
-    Сортировка списка словарей по значению ключа "date"
-
-    Args:
-        data: Список словарей, которые нужно отсортировать
-        sort_order: Порядок сортировки "increasing" (по возрастанию) или "decreasing" (по убыванию)
-
-    Returns:
-        Отсортированный список словарей.
-    """
-    if sort_order == "increasing":
-        return sorted(data, key=lambda item: item["date"], reverse=True)
-    elif sort_order == "decreasing":
-        return sorted(data, key=lambda item: item["date"])
-    else:
-        raise ValueError("Invalid sort order. Choose 'increasing' or 'decreasing'")
-
-
-def test_filter_by_state() -> None:
-    test_list = [
-        {"id": 1, "state": "executed"},
-        {"id": 2, "state": "pending"},
-        {"id": 3, "state": "executed"},
+# fixture для предоставления тестовых данных
+@pytest.fixture
+def sample_data():
+    return [
+        {"state": "EXECUTED", "date": "2022-01-15"},
+        {"state": "PENDING", "date": "2022-02-10"},
+        {"state": "EXECUTED", "date": "2022-02-01"},
+        {"state": "FAILED", "date": "2022-03-05"}
     ]
 
-    # Test cases for state_status="executed"
-    filtered_list_executed = filter_by_state(test_list, "executed")
-    assert len(filtered_list_executed) == 2
-    assert all(item["state"] == "EXECUTED" for item in filtered_list_executed)
 
-    # Test cases for state_status="pending"
-    filtered_list_pending = filter_by_state(test_list, "pending")
-    assert len(filtered_list_pending) == 1
-    assert all(item["state"] == "PENDING" for item in filtered_list_pending)
+# Параметризованный тест для функции filter_by_state
+@pytest.mark.parametrize("state_status, expected_output",
+                         [("EXECUTED", [{"state": "EXECUTED", "date": "2022-01-15"},
+                                        {"state": "EXECUTED", "date": "2022-02-01"}]),
+                          ("FAILED", [{"state": "FAILED", "date": "2022-03-05"}])])
+def test_filter_by_state(sample_data, state_status, expected_output):
+    assert filter_by_state(sample_data, state_status) == expected_output
 
 
-def test_sort_by_date() -> None:
-    test_list = [
-        {"id": 1, "date": "2022-01-01"},
-        {"id": 2, "date": "2022-02-15"},
-        {"id": 3, "date": "2022-03-10"},
-    ]
-
-    # Test cases for sort_order="increasing"
-    sorted_list_increasing = sort_by_date(test_list, "increasing")
-    assert sorted_list_increasing == [
-        {"id": 3, "date": "2022-03-10"},
-        {"id": 2, "date": "2022-02-15"},
-        {"id": 1, "date": "2022-01-01"},
-    ]
-
-    # Test cases for sort_order="decreasing"
-    sorted_list_decreasing = sort_by_date(test_list, "decreasing")
-    assert sorted_list_decreasing == [
-        {"id": 1, "date": "2022-01-01"},
-        {"id": 2, "date": "2022-02-15"},
-        {"id": 3, "date": "2022-03-10"},
-    ]
+# Параметризованный тест для функции sort_by_date
+@pytest.mark.parametrize("time, expected_output",
+                         [("increasing", [{"state": "EXECUTED", "date": "2022-01-15"},
+                                          {"state": "EXECUTED", "date": "2022-02-01"},
+                                          {"state": "PENDING", "date": "2022-02-10"},
+                                          {"state": "FAILED", "date": "2022-03-05"}]),
+                          ("decreasing", [{"state": "FAILED", "date": "2022-03-05"},
+                                          {"state": "PENDING", "date": "2022-02-10"},
+                                          {"state": "EXECUTED", "date": "2022-02-01"},
+                                          {"state": "EXECUTED", "date": "2022-01-15"}])])
+def test_sort_by_date(sample_data, time, expected_output):
+    assert sort_by_date(sample_data, time) == expected_output
