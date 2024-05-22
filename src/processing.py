@@ -13,7 +13,7 @@ def filter_by_state(list_: List[Dict], state_status: str = "executed") -> List[D
 
 
 def sort_by_date(list_: List[Dict], time: str = "increasing") -> List[Dict]:
-    """Сортировка списAка по дате"""
+    """Сортировка списка по дате"""
     sorted_list = []
     if time == "increasing":
         sorted_list = sorted(list_, key=lambda dict_: dict_["date"])
