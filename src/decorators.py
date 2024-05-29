@@ -1,25 +1,39 @@
-from functools import wraps
-from typing import Any, Callable, Optional
+import datetime
+import functools
+from typing import Any, Callable
 
 
-def log(filename: Optional[str] = None, mode: str = "a") -> Callable:
-    """Записывает в файл/ выводит в консоль результат выполнения декорируемой функции"""
+def log(filename: Any = None) -> Callable:
+    """
+    Записывает в файл и выводит в консоль результат выполнения декорируемой функции
+    """
 
-    def dec(func: Callable) -> Callable:
-        @wraps(func)
-        def wrapper(*args: Any, **kwargs: Any) -> str:
+    def decorator(func: Callable) -> Callable:
+        @functools.wraps(func)
+        def wrapper(args: Any, kwargs: Any) -> Any:
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             try:
-                func(*args, **kwargs)
-                result = f"{func.__name__} ok"
+                result = func(args, kwargs)
+                logmessage = f"{timestamp} {func.__name__} ok"
             except Exception as e:
-                result = f"{func.__name__} error: {type(e).__name__}. Inputs: {args}, {kwargs}"
+                result = None
+                logmessage = f"{timestamp} {func.__name__} error: {type(e).__name__}. Inputs: {args}, {kwargs}"
+
             if filename:
-                with open(filename, mode) as f:
-                    f.write(result + "\n")
+                with open(filename, "a") as f:
+                    f.write(logmessage + "\n")
             else:
-                print(result)
+                print(logmessage)
             return result
 
         return wrapper
 
-    return dec
+    return decorator
+
+
+@log(filename="mylog.txt")
+def homework_function(x: int, y: int) -> int:
+    return x + y
+
+
+homework_function(1, 2)

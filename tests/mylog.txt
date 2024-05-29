@@ -1,0 +1,26 @@
+2024-05-29 09:53:52 my_function ok
+2024-05-29 09:53:52 my_function ok
+2024-05-29 09:53:52 my_function ok
+2024-05-29 09:53:52 my_function ok
+2024-05-29 09:53:52 my_function ok
+2024-05-29 09:53:52 my_function ok
+my_function ok
+my_function ok
+2024-05-29 10:07:24 my_function ok
+2024-05-29 10:07:24 my_function ok
+2024-05-29 10:07:24 my_function ok
+2024-05-29 10:07:24 my_function ok
+2024-05-29 10:07:24 my_function ok
+2024-05-29 10:07:24 my_function ok
+2024-05-29 10:17:44 homework_function ok
+2024-05-29 10:17:44 homework_function ok
+2024-05-29 10:17:44 homework_function ok
+2024-05-29 10:17:44 homework_function ok
+2024-05-29 10:17:44 homework_function ok
+2024-05-29 10:17:44 homework_function ok
+2024-05-29 10:19:03 homework_function ok
+2024-05-29 10:19:03 homework_function ok
+2024-05-29 10:19:03 homework_function ok
+2024-05-29 10:19:03 homework_function ok
+2024-05-29 10:19:03 homework_function ok
+2024-05-29 10:19:03 homework_function ok
