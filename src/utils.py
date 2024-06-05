@@ -1,50 +1,60 @@
 import json
+import os
 from pathlib import Path
 from typing import Any, Dict, List
 
-from src.external_API import get_currency_rate
-from src.logger import setup_logging
+import requests
+from dotenv import load_dotenv
 
-logger = setup_logging()
+load_dotenv()
+API_KEY = os.getenv("API_KEY")
 
 
-def read_transaction_data(file_path: Path) -> List[Dict[str, Any]]:
+def read_the_json_file(file_path: Path) -> List[Dict[str, Any]]:
     """Считывает транзакции из JSON-файла."""
     try:
-        with open(file_path, encoding="utf-8") as f:
+        with file_path.open(encoding="utf-8") as f:
             data = json.load(f)
         if isinstance(data, list):
             return data
         else:
             return []
-    except (FileNotFoundError, json.JSONDecodeError) as e:
-        logger.error(f"Ошибка при чтении JSON-файла: {e}")
+    except (FileNotFoundError, json.JSONDecodeError):
         return []
 
 
-def calculate_total_amount(transaction: dict) -> float:
-    """Суммирует суммы всех транзакций"""
-    total_amount = 0.0
-    currency_code = transaction.get("operationAmount", {}).get("currency", {}).get("code")
-    transaction_amount = float(transaction.get("operationAmount", {}).get("amount", 0.0))
+def receive_currency_and_convert(currency: Any) -> Any:
+    """Получает курс валюты от API и возвращает его в виде float"""
+    url = f"https://api.apilayer.com/fixer/latest?symbols={currency}"
+    try:
+        response = requests.get(url, headers={"apikey": API_KEY}, timeout=5)
+        response.raise_for_status()
+        """Поднимает исключение, если код ответа не 2xx"""
+        response_data = response.json()
+        rate = response_data["rates"]["RUB"]
+        return rate
+    except requests.exceptions.RequestException as e:
+        print(f"Ошибка API: {e}")
+        """# Возвращаем 1.0 как значение по умолчанию"""
+        return 1.0
 
-    if currency_code == "RUB":
-        total_amount += transaction_amount
-    elif currency_code == "EUR":
-        total_amount += transaction_amount * get_currency_rate("EUR")
-    elif currency_code == "USD":
-        total_amount += transaction_amount * get_currency_rate("USD")
-    else:
-        logger.warning(f"Неизвестная валюта: {currency_code}")
 
-    logger.info(f"Сумма транзакции: {total_amount:.2f} RUB")
-    return total_amount
+def sum_1(transaction: dict) -> float:
+
+    total = 0.0
+    if transaction.get("operationAmount", {}).get("currency", {}).get("code") == "RUB":
+        total += float(transaction["operationAmount"]["amount"])
+    elif transaction.get("operationAmount", {}).get("currency", {}).get("code") == "EUR":
+        total += float(transaction["operationAmount"]["amount"]) * receive_currency_and_convert("EUR")
+    elif transaction.get("operationAmount", {}).get("currency", {}).get("code") == "USD":
+        total += float(transaction["operationAmount"]["amount"]) * receive_currency_and_convert("USD")
+    return total
 
 
 if __name__ == "__main__":
-    transactions_file_path = Path("../data/operations.json")  # Путь к файлу с операциями
-    transactions_data = read_transaction_data(transactions_file_path)
-    total_amount_rub = calculate_total_amount(
+    operations_path = Path("../data/operations.json")  # Путь к файлу с операциями
+    transactions = read_the_json_file(operations_path)
+    total_rub = sum_1(
         {
             "id": 441945886,
             "state": "EXECUTED",
@@ -55,4 +65,5 @@ if __name__ == "__main__":
             "to": "Счет 64686473678894779589",
         }
     )
-    print(f"Общая сумма в рублях: {total_amount_rub:.2f}")
+
+    print(f"Общая сумма в рублях: {total_rub:.2f}")

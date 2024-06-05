@@ -3,10 +3,13 @@ import pytest
 from src.widget import convert_date, number_or_account
 
 
-@pytest.mark.parametrize("input_date, expected_result", [
-    ("2022-04-13T15:30:00", "13.04.2022"),
-    ("2023-12-25T08:00:00", "25.12.2023"),
-])
+@pytest.mark.parametrize(
+    "input_date, expected_result",
+    [
+        ("2022-04-13T15:30:00", "13.04.2022"),
+        ("2023-12-25T08:00:00", "25.12.2023"),
+    ],
+)
 def test_convert_date(input_date: str, expected_result: str) -> None:
     assert convert_date(input_date) == expected_result
 
