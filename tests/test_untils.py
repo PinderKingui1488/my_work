@@ -6,7 +6,7 @@ from unittest.mock import MagicMock, Mock, patch
 import requests
 from dotenv import load_dotenv
 
-from src.utils import receive_currency_and_convert, read_the_json_file, sum_1
+from src.utils import read_the_json_file, receive_currency_and_convert, sum_1
 
 load_dotenv()
 API_KEY = os.getenv("api_key")
