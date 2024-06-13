@@ -1,53 +1,43 @@
 import json
-import os
 from pathlib import Path
 from typing import Any, Dict, List
 
-import requests
-from dotenv import load_dotenv
+from src.external_API import get_currency_rate
+from src.logger import setup_logging
 
-load_dotenv()
-API_KEY = os.getenv("API_KEY")
+logger = setup_logging()
 
 
 def read_the_json_file(file_path: Path) -> List[Dict[str, Any]]:
     """Считывает транзакции из JSON-файла."""
     try:
-        with file_path.open(encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             data = json.load(f)
         if isinstance(data, list):
             return data
         else:
             return []
-    except (FileNotFoundError, json.JSONDecodeError):
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        logger.error(f"Ошибка при чтении JSON-файла: {e}")
         return []
 
 
-def receive_currency_and_convert(currency: Any) -> Any:
-    """Получает курс валюты от API и возвращает его в виде float"""
-    url = f"https://api.apilayer.com/fixer/latest?symbols={currency}"
-    try:
-        response = requests.get(url, headers={"apikey": API_KEY}, timeout=5)
-        response.raise_for_status()
-        """Поднимает исключение, если код ответа не 2xx"""
-        response_data = response.json()
-        rate = response_data["rates"]["RUB"]
-        return rate
-    except requests.exceptions.RequestException as e:
-        print(f"Ошибка API: {e}")
-        """# Возвращаем 1.0 как значение по умолчанию"""
-        return 1.0
-
-
 def sum_1(transaction: dict) -> float:
-
+    """Суммирует суммы всех транзакций"""
     total = 0.0
-    if transaction.get("operationAmount", {}).get("currency", {}).get("code") == "RUB":
-        total += float(transaction["operationAmount"]["amount"])
-    elif transaction.get("operationAmount", {}).get("currency", {}).get("code") == "EUR":
-        total += float(transaction["operationAmount"]["amount"]) * receive_currency_and_convert("EUR")
-    elif transaction.get("operationAmount", {}).get("currency", {}).get("code") == "USD":
-        total += float(transaction["operationAmount"]["amount"]) * receive_currency_and_convert("USD")
+    currency = transaction.get("operationAmount", {}).get("currency", {}).get("code")
+    amount = float(transaction.get("operationAmount", {}).get("amount", 0.0))
+
+    if currency == "RUB":
+        total += amount
+    elif currency == "EUR":
+        total += amount * get_currency_rate("EUR")
+    elif currency == "USD":
+        total += amount * get_currency_rate("USD")
+    else:
+        logger.warning(f"Неизвестная валюта: {currency}")
+
+    logger.info(f"Сумма транзакции: {total:.2f} RUB")
     return total
 
 
@@ -65,5 +55,4 @@ if __name__ == "__main__":
             "to": "Счет 64686473678894779589",
         }
     )
-
     print(f"Общая сумма в рублях: {total_rub:.2f}")

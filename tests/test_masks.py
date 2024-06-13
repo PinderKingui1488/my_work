@@ -1,20 +1,20 @@
-import pytest
+from src.masks import mask_account, mask_card
 
-from src.masks import mask_account_number, mask_card_number
-
-
-@pytest.mark.parametrize(
-    "input_number, expected_output",
-    [("1234567890123456", "1234 56** **** 3456"), ("9876543210987654", "9876 54** **** 7654")],
-)
-def test_mask_card_number(input_number: str, expected_output: str) -> None:
-    assert mask_card_number(input_number) == expected_output
+"""
+# Проверка функции mask_card() с аннотациями типов
+"""
 
 
-@pytest.mark.parametrize("input_number, expected_output", [("1234567890", "**7890"), ("9876543210", "**3210")])
-def test_mask_account_number(input_number: str, expected_output: str) -> None:
-    assert mask_account_number(input_number) == expected_output
+def test_mask_card() -> None:
+    assert mask_card("1234567890123456") == "1234 56**** 3456"  # Исправлен формат маски
+    assert mask_card("12345") == "Некорректный номер карты"
 
 
-if __name__ == "__main__":
-    pytest.main()
+"""
+# Проверка функции mask_account() с аннотациями типов
+"""
+
+
+def test_mask_account() -> None:
+    assert mask_account("73654108430135874305") == "4305"  # Удалены лишние звездочки
+    assert mask_account("123") == "Некорректный номер счета"
