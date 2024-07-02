@@ -1,6 +1,6 @@
 import re
 from pathlib import Path
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Generator
 
 from src.almost_exel_table import read_transactions_csv, read_transactions_xlsx
 from src.dictionary_processing import search_transactions
@@ -52,7 +52,8 @@ def filter_by_status(data: List[Dict]) -> List[Dict]:
     return filter_by_state(data, status)
 
 
-def sort_by_date_and_currency(data: List[Dict], file_type: str) -> list[dict[Any, Any]]:
+def sort_by_date_and_currency(data: List[Dict], file_type: str) -> list[dict[Any, Any]] | Generator[Any, None, None] | \
+                                                                   list[dict]:
     """Сортирует список транзакций по дате и фильтрует по валюте.
 
     Args:
