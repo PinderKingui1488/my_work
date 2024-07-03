@@ -8,17 +8,15 @@ def search_transactions(transactions_1: List[Dict[str, Any]], search_string: str
     """
     Фильтрация списка словарей, проверяя наличие строки поиска в описании.
 
-    Args:
-        transactions_1: Список словарей с транзакциями.
-        search_string: Строка поиска.
+        transactions_1 Список словарей с транзакциями.
+        search_string Строка поиска.
 
-    Returns:
-        Отфильтрованный список словарей с транзакциями.
+    Returns Отфильтрованный список словарей с транзакциями.
     """
     return [
         transaction
         for transaction in transactions_1
-        if "description" in transaction and re.search(search_string, transaction["description"], re.IGNORECASE)
+        if "description" in transaction and re.search(search_string, transaction["description"])
     ]
 
 
@@ -28,12 +26,10 @@ def categorize_transactions(
     """
     Подсчет операций в каждой категории, используя заданные ключевые слова.
 
-    Args:
-        transactions_2: Список словарей с транзакциями.
-        categories_2: Словарь с категориями и соответствующими ключевыми словами.
+        transactions_2 Список словарей с транзакциями.
+        categories_2 Словарь с категориями и соответствующими ключевыми словами.
 
-    Returns:
-        Словарь, где ключи - названия категорий, а значения - количество транзакций, относящихся к каждой категории.
+    Returns Словарь, где ключи - названия категорий, а значения - количество транзакций, относящихся к каждой категории.
     """
     category_counts_2: Dict[str, int] = Counter()
 
@@ -48,27 +44,27 @@ def categorize_transactions(
     return dict(category_counts_2)
 
 
-def read_transactions_from_json(file_path: str) -> List[Dict[str, Any]]:
+# Пример использования:
+def read_transactions_from_json(file_path: str) -> Any:
     """
     Чтение транзакций из JSON-файла.
 
     Args:
-        file_path: Путь к JSON-файлу.
+        file_path (str): Путь к JSON-файлу.
 
     Returns:
-        Список словарей с транзакциями из JSON-файла.
+        List[Dict[str, Any]]: Список словарей с транзакциями из JSON-файла.
     """
     with open(file_path, "r", encoding="utf-8") as file:
         return json.load(file)
 
 
-# Пример использования:
 transactions = read_transactions_from_json("data/operations.json")
 
 categories = {"Перевод": ["Перевод организации", "Перевод частному лицу"]}
 
 category_counts = categorize_transactions(transactions, categories)
-print("Количество операций в каждой категории:", category_counts)
+# print("Количество операций в каждой категории:", category_counts)
 
 transactions_4 = [
     {"description": "Оплата за интернет"},
