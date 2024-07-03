@@ -1,6 +1,7 @@
 import re
+from typing import Union
 from pathlib import Path
-from typing import Dict, List, Any, Generator
+from typing import Dict, List, Generator
 
 from src.almost_exel_table import read_transactions_csv, read_transactions_xlsx
 from src.dictionary_processing import search_transactions
@@ -52,8 +53,7 @@ def filter_by_status(data: List[Dict]) -> List[Dict]:
     return filter_by_state(data, status)
 
 
-def sort_by_date_and_currency(data: List[Dict], file_type: str) -> list[dict[Any, Any]] | Generator[Any, None, None] | \
-                                                                   list[dict]:
+def sort_by_date_and_currency(data: List[Dict], file_type: str) -> Union[Generator[Dict, None, None], List[Dict]]:
     """Сортирует список транзакций по дате и фильтрует по валюте.
 
     Args:
@@ -85,7 +85,7 @@ def sort_by_date_and_currency(data: List[Dict], file_type: str) -> list[dict[Any
     elif to_sort.lower() == "нет":
         return data
     else:
-        """Если выбрал некорректный ответ возвращает обратно к вопросу to_sort"""
+        """Если выбрал некорректный ответ возращает обратно к вопросу to_sort"""
         print("Некорректный ответ, повторите ввод.")
         return sort_by_date_and_currency(data, file_type)
 
@@ -96,7 +96,6 @@ def filter_by_keyword(data: List[Dict]) -> List[Dict]:
     Args:
         data Список словарей с транзакциями.
 
-
     Returns Отфильтрованный список транзакций.
     """
     to_sort = input("Отсортировать список операций по определённому слову в описании? Да/нет\n")
@@ -106,7 +105,7 @@ def filter_by_keyword(data: List[Dict]) -> List[Dict]:
     elif to_sort.lower() == "нет":
         return data
     else:
-        """Если выбрал некорректное ответ возвращает обратно к вопросу to_sort"""
+        """Если выбрал некорректное ответ возращает обратно к вопросу to_sort"""
         print("Некорректный ответ, повторите ввод.")
         return filter_by_keyword(data)
 
